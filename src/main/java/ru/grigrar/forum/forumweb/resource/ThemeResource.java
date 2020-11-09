@@ -7,8 +7,12 @@ import ru.grigrar.forum.forumweb.service.ThemeService;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.ws.rs.*;
+import javax.ws.rs.container.ResourceContext;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
+import java.util.Optional;
 
 @Path("/themes")
 @Component
@@ -16,41 +20,45 @@ import javax.ws.rs.core.Response;
 @Produces(MediaType.APPLICATION_JSON)
 public class ThemeResource {
 
+    @Context
+    private ResourceContext context;
+    @Autowired
     private ThemeService themeService;
 
-    @Autowired
-    public ThemeResource(ThemeService themeService){
-        this.themeService=themeService;
-    }
-
-
     @GET
-    public Response getThemes(){
-        return Response.ok().entity(themeService.getThemes()).build();
+    public Response getThemes() {
+        List<Theme> themes = themeService.getThemes();
+        System.out.println(themes.toString() + "fwefffffff");
+        return Response.ok().entity(themes).build();
     }
 
     @Path("/{id}")
     @GET
-    public Response getTheme(@PathParam("id") Integer id){
-        return Response.ok().entity(themeService.getTheme(id)).build();
+    public Response getTheme(@PathParam("id") Integer id) {
+        Theme theme = themeService.getTheme(id);
+        return Response.ok().entity(theme).build();
     }
 
     @POST
-    public Response saveTheme(Theme theme){
-            return Response.status(Response.Status.CREATED).entity(themeService.saveThem(theme)).build();
+    public Response saveTheme(Theme theme) {
+        return Response.status(Response.Status.CREATED).entity(themeService.saveThem(theme)).build();
     }
 
-    @Path("/{id}")
+    @Path("/{themeId}")
     @DELETE
-    public Response deleteTheme(@PathParam("id") Integer id){
+    public Response deleteTheme(@PathParam("themeId") Integer id) {
         return Response.noContent().entity(themeService.deleteTheme(id)).build();
     }
 
     @PUT
-    public Response updateTheme(Theme theme){
-        return  Response.noContent().entity(themeService.editTheme(theme)).build();
+    public Response updateTheme(Theme theme) {
+        return Response.noContent().entity(themeService.editTheme(theme)).build();
     }
     //TODO  метод PUT
     //TODO метод возврата по ИД
 
+    @Path("/{themeId}/topics")
+    public TopicResource topics() {
+        return context.getResource(TopicResource.class);
+    }
 }

@@ -1,11 +1,14 @@
 package ru.grigrar.forum.forumweb.model;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.Tables;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table
@@ -13,12 +16,23 @@ public class Theme {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // вытаскивает id
-    private  Integer id;
+    private Integer id;
 
     @Column
-    @NotBlank //без пустого имени
+    @NotBlank //не пустое
     private String name;
 
+    @Hidden
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "theme")
+    private Set<Topic> topics = new HashSet<>();
+
+    public Set<Topic> getTopics() {
+        return topics;
+    }
+
+    public void setTopics(Set<Topic> topics) {
+        this.topics = topics;
+    }
 
     @Override
     public boolean equals(Object o) {

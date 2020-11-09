@@ -1,10 +1,12 @@
 package ru.grigrar.forum.forumweb.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.Tables;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -13,12 +15,24 @@ public class Message {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // вытаскивает id
-    private  Integer id;
+    private Integer id;
 
     @Column
     @NotBlank //без пустого имени
+    @JoinColumn(name = "name")
     private String name;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "topic_id")
+    private Topic topic;
+
+    public Topic getTopic() {
+        return topic;
+    }
+
+    public void setTopic(Topic topic) {
+        this.topic = topic;
+    }
 
     public Integer getId() {
         return id;

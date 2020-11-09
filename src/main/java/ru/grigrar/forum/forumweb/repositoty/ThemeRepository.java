@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 import ru.grigrar.forum.forumweb.model.Theme;
 
 @Repository
-public interface ThemeRepository extends JpaRepository<Theme,Integer> {
+public interface ThemeRepository extends JpaRepository<Theme, Integer> {
 }
