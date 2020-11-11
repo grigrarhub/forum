@@ -1,9 +1,11 @@
 package ru.grigrar.forum.forumweb.resource;
 
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import ru.grigrar.forum.forumweb.dto.MessageDto;
 import ru.grigrar.forum.forumweb.model.Message;
-import ru.grigrar.forum.forumweb.model.Topic;
 import ru.grigrar.forum.forumweb.service.MessageService;
 
 import javax.ws.rs.*;
@@ -12,6 +14,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.Set;
 
 @Path("/messages")
 @Component
@@ -24,13 +27,16 @@ public class MessageResource {
 
     @Autowired
     private MessageService messageService;
+    @Autowired
+    private ModelMapper modelMapper;
 
     @GET
-    public Response getMessages() {
-        List<Message> messages = messageService.getMessages();
+    public Response getMessages(@PathParam("topicId") Integer id) {
+        List<MessageDto> messageDtos = modelMapper.map(messageService.getMessages(id), new TypeToken<List<MessageDto>>(){}.getType());
+
         return Response
                 .ok()
-                .entity(messages).build();
+                .entity(messageDtos).build();
     }
 
     @Path("/{id}")
@@ -40,7 +46,8 @@ public class MessageResource {
     }
 
     @POST
-    public Response saveMessage(Message message, @PathParam("topicId") Integer id) {
+    public Response saveMessage(MessageDto messageDto, @PathParam("topicId") Integer id) {
+        Message message = modelMapper.map(messageDto,Message.class);
         return Response.status(Response.Status.CREATED).entity(messageService.saveMessage(message, id)).build();
     }
 

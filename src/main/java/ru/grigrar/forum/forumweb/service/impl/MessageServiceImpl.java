@@ -9,10 +9,11 @@ import ru.grigrar.forum.forumweb.repositoty.MessageRepository;
 import ru.grigrar.forum.forumweb.repositoty.TopicRepository;
 import ru.grigrar.forum.forumweb.service.MessageService;
 
-import java.beans.Transient;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
+@Transactional
 @Service
 public class MessageServiceImpl implements MessageService {
 
@@ -30,20 +31,26 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public List<Message> getMessages() {
-        return messageRepository.findAll();
+    public Set<Message> getMessages(Integer id)
+    {
+        Topic topic = topicRepository.findById(id).get();
+        Set<Message> messages = new HashSet<>();
+        for(Message message: messageRepository.findAll())
+            if(message.getTopic().equals(topic))
+                messages.add(message);
+        return messages;
     }
 
     @Override
     public Object deleteMessage(Integer id) {
-
+        
         messageRepository.deleteById(id);
         return null;
 
     }
 
     @Override
-    @Transactional // TODO прчитать что такое ACID!!
+     // TODO прчитать что такое ACID!!
     public void editMessage(Message message) {
         Optional<Message> optionalMessage = messageRepository.findById(message.getId());
         if (optionalMessage.isPresent()) {

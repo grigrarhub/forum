@@ -1,7 +1,12 @@
 package ru.grigrar.forum.forumweb.resource;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import ru.grigrar.forum.forumweb.dto.ThemeDto;
 import ru.grigrar.forum.forumweb.model.Theme;
 import ru.grigrar.forum.forumweb.service.ThemeService;
 
@@ -24,23 +29,28 @@ public class ThemeResource {
     private ResourceContext context;
     @Autowired
     private ThemeService themeService;
+    @Autowired
+    private ModelMapper modelMapper;
+
 
     @GET
     public Response getThemes() {
         List<Theme> themes = themeService.getThemes();
-        System.out.println(themes.toString() + "fwefffffff");
-        return Response.ok().entity(themes).build();
+        List<ThemeDto> themeDtos = modelMapper.map(themes, new TypeToken<List<ThemeDto>>(){}.getType());
+        return Response.ok().entity(themeDtos).build();
     }
 
     @Path("/{id}")
     @GET
     public Response getTheme(@PathParam("id") Integer id) {
         Theme theme = themeService.getTheme(id);
-        return Response.ok().entity(theme).build();
+        ThemeDto themeDto = modelMapper.map(theme,ThemeDto.class);
+        return Response.ok().entity(themeDto).build();
     }
 
     @POST
-    public Response saveTheme(Theme theme) {
+    public Response saveTheme(ThemeDto themeDto) {
+        Theme theme = modelMapper.map(themeDto,Theme.class);
         return Response.status(Response.Status.CREATED).entity(themeService.saveThem(theme)).build();
     }
 
@@ -51,7 +61,8 @@ public class ThemeResource {
     }
 
     @PUT
-    public Response updateTheme(Theme theme) {
+    public Response updateTheme(ThemeDto themeDto) {
+        Theme theme = modelMapper.map(themeDto,Theme.class);
         return Response.noContent().entity(themeService.editTheme(theme)).build();
     }
     //TODO  метод PUT

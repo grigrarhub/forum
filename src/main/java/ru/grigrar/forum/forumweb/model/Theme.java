@@ -22,13 +22,17 @@ public class Theme {
     @NotBlank //не пустое
     private String name;
 
-    @Hidden
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "theme")
-    private Set<Topic> topics = new HashSet<>();
-
     public Set<Topic> getTopics() {
         return topics;
     }
+
+    public void setTopics(Topic topic) {
+        this.topics.add(topic);
+    }
+
+    @Hidden
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "theme")
+    private Set<Topic> topics = new HashSet<>();
 
     public void setTopics(Set<Topic> topics) {
         this.topics = topics;

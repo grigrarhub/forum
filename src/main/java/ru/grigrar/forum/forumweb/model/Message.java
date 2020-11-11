@@ -1,6 +1,7 @@
 package ru.grigrar.forum.forumweb.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.Hidden;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.Tables;
 
@@ -19,10 +20,9 @@ public class Message {
 
     @Column
     @NotBlank //без пустого имени
-    @JoinColumn(name = "name")
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "topic_id")
     private Topic topic;
 

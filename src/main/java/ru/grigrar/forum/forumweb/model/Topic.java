@@ -5,10 +5,7 @@ import ru.grigrar.forum.forumweb.repositoty.MessageRepository;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table
@@ -18,6 +15,19 @@ public class Topic {
     @GeneratedValue(strategy = GenerationType.IDENTITY) // вытаскивает id
     private Integer id;
 
+    @Column
+    @NotBlank //без пустого имени
+    private String name;
+
+    @Hidden
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "theme_id")
+    private Theme theme;
+
+    @Hidden
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "topic")
+    private Set<Message> messages = new HashSet<>();
+
     @Override
     public String toString() {
         return "Topic{" +
@@ -25,17 +35,6 @@ public class Topic {
                 ", name='" + name + '\'' +
                 '}';
     }
-
-    @Column
-    @NotBlank //без пустого имени
-    private String name;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "theme_id")
-    private Theme theme;
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "topic")// TODO set message
-    private Set<Message> messages = new HashSet<>();
 
     public Theme getTheme() {
         return theme;
@@ -45,13 +44,21 @@ public class Topic {
         this.theme = theme;
     }
 
-    public Set<Message> getMessages() {
-        return messages;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Topic topic = (Topic) o;
+        return id.equals(topic.id) &&
+                name.equals(topic.name);
     }
 
-    public void setMessages(Set<Message> messages) {
-        this.messages = messages;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
     }
+
+
 
     public Integer getId() {
         return id;
