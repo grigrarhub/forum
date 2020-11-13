@@ -48,7 +48,9 @@ public class MessageResource {
     @POST
     public Response saveMessage(MessageDto messageDto, @PathParam("topicId") Integer id) {
         Message message = modelMapper.map(messageDto,Message.class);
-        return Response.status(Response.Status.CREATED).entity(messageService.saveMessage(message, id)).build();
+        message = messageService.saveMessage(message,id);
+        messageDto = modelMapper.map(message, MessageDto.class);
+        return Response.status(Response.Status.CREATED).entity(messageDto).build();
     }
 
     @Path("/{id}")

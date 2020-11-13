@@ -50,7 +50,7 @@ public class ThemeResource {
 
     @POST
     public Response saveTheme(ThemeDto themeDto) {
-        Theme theme = modelMapper.map(themeDto,Theme.class);
+            Theme theme = modelMapper.map(themeDto,Theme.class);
         return Response.status(Response.Status.CREATED).entity(themeService.saveThem(theme)).build();
     }
 

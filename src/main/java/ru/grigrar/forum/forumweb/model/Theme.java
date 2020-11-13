@@ -31,11 +31,16 @@ public class Theme {
     }
 
     @Hidden
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "theme")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "theme")
     private Set<Topic> topics = new HashSet<>();
 
     public void setTopics(Set<Topic> topics) {
         this.topics = topics;
+    }
+
+    public void addTopic(Topic topic) {
+        topic.setTheme(this);
+        this.getTopics().add(topic);
     }
 
     @Override

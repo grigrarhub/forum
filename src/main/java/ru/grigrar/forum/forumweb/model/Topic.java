@@ -25,8 +25,12 @@ public class Topic {
     private Theme theme;
 
     @Hidden
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "topic")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "topic")
     private Set<Message> messages = new HashSet<>();
+
+    public Set<Message> getMessages() {
+        return messages;
+    }
 
     @Override
     public String toString() {
@@ -34,6 +38,11 @@ public class Topic {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 '}';
+    }
+
+    public void addMessage(Message message) {
+        message.setTopic(this);
+        this.getMessages().add(message);
     }
 
     public Theme getTheme() {
@@ -57,7 +66,6 @@ public class Topic {
     public int hashCode() {
         return Objects.hash(id, name);
     }
-
 
 
     public Integer getId() {

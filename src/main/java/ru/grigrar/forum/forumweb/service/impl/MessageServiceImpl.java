@@ -9,6 +9,7 @@ import ru.grigrar.forum.forumweb.repositoty.MessageRepository;
 import ru.grigrar.forum.forumweb.repositoty.TopicRepository;
 import ru.grigrar.forum.forumweb.service.MessageService;
 
+import javax.ws.rs.WebApplicationException;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -24,33 +25,32 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public Message saveMessage(Message message, Integer id) {
-        message.setTopic(topicRepository.findById(id).get());
-        messageRepository.save(message);
-        System.out.println(message.toString());
+        Optional<Topic> topicOptional = topicRepository.findById(id);
+        Topic topic = topicOptional.orElseThrow(WebApplicationException::new);
+        topic.addMessage(message);
         return message;
     }
 
     @Override
-    public Set<Message> getMessages(Integer id)
-    {
+    public Set<Message> getMessages(Integer id) {
         Topic topic = topicRepository.findById(id).get();
         Set<Message> messages = new HashSet<>();
-        for(Message message: messageRepository.findAll())
-            if(message.getTopic().equals(topic))
+        for (Message message : messageRepository.findAll())
+            if (message.getTopic().equals(topic))
                 messages.add(message);
         return messages;
     }
 
     @Override
     public Object deleteMessage(Integer id) {
-        
+
         messageRepository.deleteById(id);
         return null;
 
     }
 
     @Override
-     // TODO прчитать что такое ACID!!
+    // TODO прчитать что такое ACID!!
     public void editMessage(Message message) {
         Optional<Message> optionalMessage = messageRepository.findById(message.getId());
         if (optionalMessage.isPresent()) {

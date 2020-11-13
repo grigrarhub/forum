@@ -1,5 +1,9 @@
 package ru.grigrar.forum.forumweb.resource;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,21 +39,24 @@ public class TopicResource {
 
     @GET
     public Response getTopics(@PathParam("themeId") Integer themeId) {
-        List<TopicDto> topicDtos = modelMapper.map(topicService.getTopics(themeId), new TypeToken<List<ThemeDto>>(){}.getType());
+        List<TopicDto> topicDtos = modelMapper.map(topicService.getTopics(themeId), new TypeToken<List<ThemeDto>>() {
+        }.getType());
         return Response.ok().entity(topicDtos).build();
     }
 
     @Path("/{id}")
     @GET
-    public Response getTopic(@PathParam("id") Integer id ) {
-        TopicDto topicDto = modelMapper.map(topicService.getTopic(id),TopicDto.class);
+    public Response getTopic(@PathParam("id") Integer id) {
+        TopicDto topicDto = modelMapper.map(topicService.getTopic(id), TopicDto.class);
         return Response.ok().entity(topicDto).build();
     }
 
     @POST
     public Response saveTopic(TopicDto topicDto, @PathParam("themeId") Integer id) {
-       Topic topic = modelMapper.map(topicDto, Topic.class);
-        return Response.status(Response.Status.CREATED).entity(topicService.saveTopic(topic,id)).build();
+        Topic topic = modelMapper.map(topicDto, Topic.class);
+        topic = topicService.saveTopic(topic, id);
+        topicDto = modelMapper.map(topic, TopicDto.class);
+        return Response.status(Response.Status.CREATED).entity(topicDto).build();
     }
 
     @PUT
